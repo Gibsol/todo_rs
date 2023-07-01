@@ -36,9 +36,13 @@ async fn create_todo() -> impl Responder {
 }
 
 #[get("/todos/{id}")]
-async fn get_todo(path: web::Path<u32>) -> impl Responder {
-    let id = path.into_inner();
-    HttpResponse::Ok().body("todos")
+async fn get_todo(path: web::Path<i64>, db: web::Data<Database>) -> impl Responder {
+    let id: i64 = path.into_inner();
+
+    match db.get_task_by_id(id).await {
+        Ok(todo) => HttpResponse::Ok().json(todo),
+        Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
+    }
 }
 
 #[put("/todos/{id}")]
