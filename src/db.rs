@@ -75,4 +75,12 @@ impl Database {
 
         Ok(todo)
     }
+
+    pub async fn delete_task(&self, id: i64) -> Result<(), Error> {
+        self.client
+            .execute("DELETE FROM todos WHERE id = $1", &[&id])
+            .await?;
+
+        Ok(())
+    }
 }
