@@ -51,6 +51,11 @@ async fn update_todo() -> impl Responder {
 }
 
 #[delete("/todos/{id}")]
-async fn delete_todo() -> impl Responder {
-    HttpResponse::Ok().body("todos")
+async fn delete_todo(path: web::Path<i64>, db: web::Data<Database>) -> impl Responder {
+    let id: i64 = path.into_inner();
+
+    match db.delete_task(id).await {
+        Ok(_) => HttpResponse::Ok().body("Successfully deleted with id: {id}"),
+        Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
+    }
 }
