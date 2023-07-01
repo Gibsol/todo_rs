@@ -4,7 +4,7 @@ mod models;
 
 use actix_web::{web, App, HttpServer};
 use api::hello;
-use api::{delete_todo, get_all_todos, get_todo};
+use api::{create_todo, delete_todo, get_all_todos, get_todo};
 use db::Database;
 
 #[actix_web::main]
@@ -19,6 +19,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(database_data.clone())
             .service(hello)
             .service(get_all_todos)
+            .service(create_todo)
             .service(get_todo)
             .service(delete_todo)
     })
