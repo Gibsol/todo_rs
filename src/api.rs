@@ -1,5 +1,5 @@
-use crate::db::Database;
-use actix_web::{delete, get, post, put, web, HttpResponse, Responder};
+use crate::{db::Database, models::TodoRequest};
+use actix_web::{delete, get, post, web, HttpResponse, Responder};
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -36,8 +36,17 @@ async fn get_all_todos(db: web::Data<Database>) -> impl Responder {
 }
 
 #[post("/todos")]
-async fn create_todo() -> impl Responder {
-    HttpResponse::Ok().body("todos")
+async fn create_todo(todo: web::Json<TodoRequest>, db: web::Data<Database>) -> impl Responder {
+    let title = &todo.title;
+    let description = &todo.description;
+
+    match db
+        .create_task(title.to_string(), description.to_string())
+        .await
+    {
+        Ok(todo) => HttpResponse::Ok().json(todo),
+        Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
+    }
 }
 
 #[get("/todos/{id}")]
@@ -48,11 +57,6 @@ async fn get_todo(path: web::Path<i64>, db: web::Data<Database>) -> impl Respond
         Ok(todo) => HttpResponse::Ok().json(todo),
         Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
     }
-}
-
-#[put("/todos/{id}")]
-async fn update_todo() -> impl Responder {
-    HttpResponse::Ok().body("todos")
 }
 
 #[delete("/todos/{id}")]
