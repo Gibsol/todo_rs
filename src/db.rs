@@ -54,4 +54,25 @@ impl Database {
 
         Ok(tasks)
     }
+
+    pub async fn get_task_by_id(&self, id: i64) -> Result<Todo, Error> {
+        let row = self
+            .client
+            .query_one("SELECT * FROM todos WHERE id = $1", &[&id])
+            .await?;
+
+        let id: i64 = row.get(0);
+        let title: String = row.get(1);
+        let description: String = row.get(2);
+        let is_done: bool = row.get(3);
+
+        let todo = Todo {
+            id,
+            title,
+            description,
+            is_done,
+        };
+
+        Ok(todo)
+    }
 }
