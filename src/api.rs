@@ -25,7 +25,12 @@ async fn hello() -> impl Responder {
 #[get("/todos")]
 async fn get_all_todos(db: web::Data<Database>) -> impl Responder {
     match db.get_tasks().await {
-        Ok(todos) => HttpResponse::Ok().json(todos),
+        Ok(todos) => {
+            if todos.is_empty() {
+                return HttpResponse::NotFound().body("No todos found");
+            }
+            HttpResponse::Ok().json(todos)
+        }
         Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
     }
 }
