@@ -4,7 +4,7 @@ mod models;
 
 use actix_web::{web, App, HttpServer};
 use api::hello;
-use api::{get_all_todos, get_todo};
+use api::{delete_todo, get_all_todos, get_todo};
 use db::Database;
 
 #[actix_web::main]
@@ -20,6 +20,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(get_all_todos)
             .service(get_todo)
+            .service(delete_todo)
     })
     .bind(("127.0.0.1", 8080))?
     .run()
