@@ -4,7 +4,7 @@ use actix_web::{delete, get, post, web, HttpResponse, Responder};
 #[get("/")]
 async fn hello() -> impl Responder {
     let welcoming_message = r#"
-        Welcome to the Rust API!
+        Welcome to the todo_rs!
         
         This API provides endpoints to manage your tasks and todos.
         You can create, retrieve, update, and delete todos using the provided endpoints.
