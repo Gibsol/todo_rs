@@ -63,8 +63,12 @@ async fn get_todo(path: web::Path<i64>, db: web::Data<Database>) -> impl Respond
 async fn delete_todo(path: web::Path<i64>, db: web::Data<Database>) -> impl Responder {
     let id: i64 = path.into_inner();
 
-    match db.delete_task(id).await {
-        Ok(_) => HttpResponse::Ok().body(format!("Successfully deleted with id: {}", id)),
-        Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
+    if let Some(_) = db.get_task_by_id(id).await.ok() {
+        match db.delete_task(id).await {
+            Ok(_) => HttpResponse::Ok().body(format!("Successfully deleted with id: {}", id)),
+            Err(_) => HttpResponse::InternalServerError().body("Something went wrong"),
+        }
+    } else {
+        HttpResponse::NotFound().body(format!("No todo found with id: {}", id))
     }
 }
